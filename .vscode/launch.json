@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "run",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/main.py",
+      // "console": "integratedTerminal",
+      "console": "internalConsole",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/Lib/site-packages"
+      },
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": [
+       
+      ]
+    }
+  ]
+}
