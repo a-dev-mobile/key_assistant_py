@@ -1,11 +1,12 @@
 import keyboard
 import time
-import pygetwindow as gw
 from threading import Thread
-from tray_icon import setup_tray
 from pynput import mouse
+from tray_icon import setup_tray
 from alt_z_x_handler import setup_alt_z_handler, get_active_window_title
 from double_shift_handler import setup_double_shift_handler
+from ctrl_shift_p_handler import on_ctrl_shift_p
+
 
 DELAY_BEFORE_ACTION = 0.5  # Задержка перед действием
 
@@ -19,9 +20,6 @@ def perform_action(window_title, action_keys):
         time.sleep(DELAY_BEFORE_ACTION)
         keyboard.press_and_release(action_keys)
 
-def on_ctrl_shift_p():
-    perform_action(get_active_window_title(), 'ctrl+p')
-
 def on_ctrl_equals():
     perform_action(get_active_window_title(), 'ctrl+n')
 
@@ -33,7 +31,7 @@ def on_mouse_move(x, y):
 
 def on_mouse_click(x, y, button, pressed):
     event_type = 'Mouse Press' if pressed else 'Mouse Release'
-    log_action(event_type, str(button), get_active_window_title())
+    log_action('Raw Button Event', f'Button: {button}, Pressed: {pressed}', get_active_window_title())
 
 def on_mouse_scroll(x, y, dx, dy):
     log_action('Mouse Scroll', f'Scroll ({dx}, {dy})', get_active_window_title())
@@ -52,6 +50,7 @@ def start_mouse_listener():
         on_scroll=on_mouse_scroll
     )
     listener.start()
+    listener.join()
 
 def main():
     print("Скрипт старт windows_assistant_py")
