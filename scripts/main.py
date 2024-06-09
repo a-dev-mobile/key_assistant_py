@@ -3,89 +3,68 @@ import time
 import pygetwindow as gw
 from threading import Thread
 from tray_icon import setup_tray
+from pynput import mouse
+from alt_z_x_handler import setup_alt_z_handler, get_active_window_title
+from double_shift_handler import setup_double_shift_handler
 
-double_shift_time = 0.3  # Максимальное время между двойными нажатиями shift
-shift_pressed_time = []
-delay_before_action = 0.5  # Задержка
+DELAY_BEFORE_ACTION = 0.5  # Задержка перед действием
 
-# State variables for alt+z followed by x
-alt_z_pressed = False
-alt_z_time = 1  # Maximum time between alt+z and x
-
-def get_active_window_title():
-    try:
-        return gw.getActiveWindow().title
-    except Exception as e:
-        return None
-
-def log_action(window_title):
+def log_action(event_type, event_name, window_title):
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-    log_message = f"{timestamp} - {window_title}"
+    log_message = f"{timestamp} - {event_type}: {event_name} - Active window: {window_title}"
     print(log_message)
 
+def perform_action(window_title, action_keys):
+    if window_title and 'Obsidian' in window_title:
+        time.sleep(DELAY_BEFORE_ACTION)
+        keyboard.press_and_release(action_keys)
+
 def on_ctrl_shift_p():
-    active_window = get_title_active_window()
-    if active_window and 'Obsidian' in active_window:
-        time.sleep(delay_before_action)
-        keyboard.press_and_release('ctrl+p')
+    perform_action(get_active_window_title(), 'ctrl+p')
 
 def on_ctrl_equals():
-    active_window = get_title_active_window()
-    if active_window and 'Obsidian' in active_window:
-        time.sleep(delay_before_action)
-        keyboard.press_and_release('ctrl+n')
+    perform_action(get_active_window_title(), 'ctrl+n')
 
-def on_shift_press(event):
-    global shift_pressed_time
-    current_time = time.time()
-    shift_pressed_time.append(current_time)
+def on_key_event(event):
+    log_action('Key Press', event.name, get_active_window_title())
 
-    # Очищаем старые записи
-    shift_pressed_time = [t for t in shift_pressed_time if current_time - t < double_shift_time]
+def on_mouse_move(x, y):
+    log_action('Mouse Move', f'Position ({x}, {y})', get_active_window_title())
 
-    # Если было два нажатия Shift в установленное время
-    if len(shift_pressed_time) == 2:
-        shift_pressed_time = []
-        active_window = get_title_active_window()
-        if active_window and 'Obsidian' in active_window:
-            time.sleep(delay_before_action)
-            keyboard.press_and_release('ctrl+o')
+def on_mouse_click(x, y, button, pressed):
+    event_type = 'Mouse Press' if pressed else 'Mouse Release'
+    log_action(event_type, str(button), get_active_window_title())
 
-def on_alt_z():
-    global alt_z_pressed
-    alt_z_pressed = True
-
-def on_x():
-    global alt_z_pressed 
-    
-    if alt_z_pressed:
-        active_window = get_title_active_window()
-        if active_window and ('Obsidian' in active_window or 'Total Commander' in active_window):
-            time.sleep(delay_before_action)
-            keyboard.press_and_release('backspace')
-            keyboard.press_and_release('F2')
-        alt_z_pressed = False  # Сброс состояния после выполнения действия
-
-def get_title_active_window():
-    active_window = get_active_window_title()
-    log_action(active_window)
-    return active_window
+def on_mouse_scroll(x, y, dx, dy):
+    log_action('Mouse Scroll', f'Scroll ({dx}, {dy})', get_active_window_title())
 
 def start_key_listener():
-    keyboard.on_press_key('shift', on_shift_press)
+    keyboard.on_press(on_key_event)
     keyboard.add_hotkey('ctrl+shift+p', on_ctrl_shift_p)
     keyboard.add_hotkey('alt+=', on_ctrl_equals)
-    keyboard.add_hotkey('alt+z', on_alt_z)
-    keyboard.on_press_key('x', lambda e: on_x())
-    # keyboard.wait('esc')  # Ожидание нажатия клавиши ESC для выхода
+    setup_alt_z_handler()
+    setup_double_shift_handler()
+
+def start_mouse_listener():
+    listener = mouse.Listener(
+        on_move=on_mouse_move,
+        on_click=on_mouse_click,
+        on_scroll=on_mouse_scroll
+    )
+    listener.start()
 
 def main():
-    print("Скрипт старт")
+    print("Скрипт старт windows_assistant_py")
 
     # Запуск слушателя клавиш в отдельном потоке
     listener_thread = Thread(target=start_key_listener)
     listener_thread.daemon = True
     listener_thread.start()
+
+    # Запуск слушателя мыши в отдельном потоке
+    mouse_thread = Thread(target=start_mouse_listener)
+    mouse_thread.daemon = True
+    mouse_thread.start()
 
     # Запуск значка в трее
     tray_thread = Thread(target=setup_tray)
@@ -96,7 +75,7 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("Скрипт остановлен")
+        print("Скрипт остановлен windows_assistant_py")
 
 if __name__ == "__main__":
     main()
