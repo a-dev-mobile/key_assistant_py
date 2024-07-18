@@ -1,7 +1,2 @@
-
-
-pygetwindow  == 0.0.9
-keyboard  == 0.13.5
-Pillow == 10.3.0
-pystray == 0.19.5
 pynput == 1.7.7
+PyYAML == 6.0.1

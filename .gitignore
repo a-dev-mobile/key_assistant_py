@@ -4,4 +4,8 @@ __pycache__/
 .ipynb_checkpoints/
 *.pyc
 *.pem
+*.log
+.vscode/*
 release
+
+*.yaml
