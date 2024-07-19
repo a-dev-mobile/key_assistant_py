@@ -1,5 +1,12 @@
+import sys
+import os
+
+# Добавление корневого каталога проекта в sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import argparse
-from key_sequence_replacer import KeySequenceReplacer
+from scripts.key_sequence_replacer import KeySequenceReplacer
+
+
 
 if __name__ == "__main__":
     # Argument parser to get command line arguments for YAML file path and delay

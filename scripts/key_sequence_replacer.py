@@ -1,22 +1,24 @@
 import time
-from pynput import keyboard
-from yaml_loader import load_key_sequences
+from scripts.read_key.main import start_reading_keys
+from scripts.yaml_loader import load_key_sequences
+import sys
+import os
 
+# Добавление корневого каталога проекта в sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 class KeySequenceReplacer:
     def __init__(self, yaml_path, delay):
-        # Initialize with key sequences and delay from YAML file
         self.key_sequences = load_key_sequences(yaml_path)
         self.delay = delay
         self.key_sequence = []
-        self.keyboard_controller = keyboard.Controller()
 
     def replace_text(self, key_group, replace):
         # Replace text by deleting the key sequence and typing the replacement text
         for _ in range(len(key_group)):
-            self.keyboard_controller.press(keyboard.Key.backspace)
-            self.keyboard_controller.release(keyboard.Key.backspace)
+            # Имитация нажатия клавиши backspace
+            print('\b', end='', flush=True)
         for char in replace:
-            self.keyboard_controller.type(char)
+            print(char, end='', flush=True)
             time.sleep(self.delay)
         self.key_sequence.clear()
 
@@ -33,16 +35,11 @@ class KeySequenceReplacer:
                     self.replace_text(sequence['keys'], sequence['replace'])
                     return
 
-    def on_key_press(self, key):
-        # Handle key press events and update the key sequence
-        try:
-            key_name = key.char if hasattr(key, 'char') and key.char else key.name
-        except AttributeError:
-            key_name = str(key)
-        self.key_sequence.append(key_name)
-        self.check_key_sequence()
+    def on_key_event(self, key_name, key_code, key_type, key_state):
+        # Handle key events and update the key sequence
+        if key_state == 'down':
+            self.key_sequence.append(key_name)
+            self.check_key_sequence()
 
     def start(self):
-        # Start listening for key press events
-        with keyboard.Listener(on_press=self.on_key_press) as listener:
-            listener.join()
+        start_reading_keys(self.on_key_event)
