@@ -1,9 +1,9 @@
 import logging
-from evdev import  categorize, ecodes
-from read_key.logger_setup import setup_logger
-from read_key.device_setup import get_input_device
-from read_key.key_utils import get_key_type, get_key_state, get_key_name
-from read_key.key_states import KeyStates
+from evdev import categorize, ecodes
+from .logger_setup import setup_logger
+from .device_setup import get_input_device
+from .key_utils import get_key_type, get_key_state, get_key_name
+from .key_states import KeyStates
 
 # Setup logging
 setup_logger()
