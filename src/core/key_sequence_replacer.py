@@ -11,6 +11,7 @@ class KeySequenceReplacer:
         self.delay = delay
         self.device_path = device_path
         self.key_sequence = []
+        self.first_match = True
         self.special_characters = {
             '!': 'shift+1',
             '@': 'shift+2',
@@ -37,7 +38,14 @@ class KeySequenceReplacer:
     def replace_text(self, key_group, replace):
         try:
             logging.info(f"Detected match: {key_group}, replacing with: {replace}")
-            # Delete the key sequence
+            
+            # Ensure the first character is deleted properly only once
+            if self.first_match and self.key_sequence:
+                keyboard.send('backspace')
+                time.sleep(self.delay)
+                self.first_match = False
+
+            # Delete the rest of the key sequence
             for _ in range(len(key_group)):
                 keyboard.send('backspace')
                 time.sleep(self.delay)
