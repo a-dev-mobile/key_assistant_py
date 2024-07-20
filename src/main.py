@@ -1,11 +1,6 @@
-import sys
-import os
 import argparse
 
-# Add the src directory to the Python path
-sys.path.append(os.path.dirname(__file__))
-
-from core.key_sequence_replacer import KeySequenceReplacer
+from src.core.key_sequence_replacer import KeySequenceReplacer
 
 if __name__ == "__main__":
     # Argument parser to get command line arguments for YAML file path, delay, and device path
