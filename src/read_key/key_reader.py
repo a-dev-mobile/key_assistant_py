@@ -1,14 +1,10 @@
 import logging
 from evdev import InputDevice, categorize, ecodes, KeyEvent
-from scripts.read_key.logger_setup import setup_logger
-from scripts.read_key.device_setup import get_input_device
-from scripts.read_key.key_utils import get_key_type, get_key_state, get_key_name
-from scripts.read_key.key_states import KeyStates
-import sys
-import os
+from read_key.logger_setup import setup_logger
+from read_key.device_setup import get_input_device
+from read_key.key_utils import get_key_type, get_key_state, get_key_name
+from read_key.key_states import KeyStates
 
-# Добавление корневого каталога проекта в sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Настройка логирования
 setup_logger()
 

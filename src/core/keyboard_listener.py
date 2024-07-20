@@ -1,4 +1,4 @@
-from read_key.main import start_reading_keys
+from read_key.key_reader import start_reading_keys
 
 class KeyboardListener:
     def __init__(self, on_key_press):

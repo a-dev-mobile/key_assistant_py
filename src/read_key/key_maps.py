@@ -1,4 +1,4 @@
-from evdev  import ecodes
+from evdev import ecodes
 
 keypad_keys = {
     ecodes.KEY_KP0: "KP0",

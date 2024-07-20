@@ -1,11 +1,7 @@
 import time
-from scripts.read_key.main import start_reading_keys
-from scripts.yaml_loader import load_key_sequences
-import sys
-import os
+from read_key.key_reader import start_reading_keys
+from core.yaml_loader import load_key_sequences
 
-# Добавление корневого каталога проекта в sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 class KeySequenceReplacer:
     def __init__(self, yaml_path, delay):
         self.key_sequences = load_key_sequences(yaml_path)
