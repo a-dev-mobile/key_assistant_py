@@ -28,7 +28,7 @@ jobs:
 
     - name: Build executable
       run: |
-        pyinstaller --onefile --hidden-import=pynput.keyboard._xorg src/main.py
+        pyinstaller main.spec
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -39,6 +39,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
