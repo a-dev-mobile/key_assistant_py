@@ -1,6 +1,6 @@
 from .key_maps import keypad_keys, letter_keys, number_keys, function_keys, navigation_keys, modifier_keys, other_keys
 from evdev import ecodes, KeyEvent
-import logging
+
 
 def get_key_type(key_code):
     if key_code in keypad_keys:

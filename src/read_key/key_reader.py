@@ -1,17 +1,14 @@
 import logging
-from evdev import InputDevice, categorize, ecodes, KeyEvent
+from evdev import  categorize, ecodes
 from read_key.logger_setup import setup_logger
 from read_key.device_setup import get_input_device
 from read_key.key_utils import get_key_type, get_key_state, get_key_name
 from read_key.key_states import KeyStates
 
-# Настройка логирования
+# Setup logging
 setup_logger()
 
-# Определение устройства ввода
-device_path = '/dev/input/event15'  # Проверьте точный путь к вашему устройству
-
-def start_reading_keys(on_key_event):
+def start_reading_keys(on_key_event, device_path):
     dev = get_input_device(device_path)
     try:
         key_states = KeyStates()

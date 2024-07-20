@@ -1,8 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
-    ['scripts/main.py'],
+    ['src/main.py'],
     pathex=[],
     binaries=[],
     datas=[],
