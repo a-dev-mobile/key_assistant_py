@@ -5,10 +5,11 @@ from .device_setup import get_input_device
 from .key_utils import get_key_type, get_key_state, get_key_name
 from .key_states import KeyStates
 
-# Setup logging
-setup_logger()
+# Setup logging will be called in main.py
+# setup_logger()
 
 def start_reading_keys(on_key_event, device_path):
+    logging.debug(f'Starting to read keys from device path: {device_path}')
     dev = get_input_device(device_path)
     try:
         key_states = KeyStates()
@@ -20,9 +21,10 @@ def start_reading_keys(on_key_event, device_path):
                 key_type = get_key_type(key_code)
                 key_name = get_key_name(key_code, key_states.shift_pressed, key_states.caps_lock_on)
 
+                logging.debug(f'Event: {key_event}, Key Code: {key_code}, Key State: {key_state}, Key Type: {key_type}, Key Name: {key_name}')
+
                 if key_code not in key_states.key_states or key_states.key_states[key_code] != key_state:
                     key_states.update_key_state(key_code, key_state)
                     on_key_event(key_name, key_code, key_type, key_state)
     except Exception as e:
         logging.error(f'Error: {e}')
-        print(f'Error: {e}')
