@@ -14,7 +14,7 @@ Keyseq
 
 * `--yaml_path`: путь к YAML файлу с последовательностями клавиш.
 * `--delay`: задержка между нажатиями клавиш для эмуляции ввода человеком.
-* `--device_path`: путь к устройству ввода.
+* `--device_name`: имя устройства ввода.
 
 ### Пример использования
 
@@ -31,14 +31,13 @@ EXECUTABLE=""
 # Аргументы
 YAML_PATH=""
 DELAY=0.05
-DEVICE_PATH="/dev/input/event15"
+DEVICE_NAME="AT Translated Set 2 keyboard"
 
 # Файл для хранения PID
-
 PID_FILE="/tmp/keyseq_pid"
 
 start() {
-    if \[ -f "$PID_FILE" \]; then
+    if [ -f "$PID_FILE" ]; then
         PID=$(cat "$PID_FILE")
         if ps -p "$PID" > /dev/null; then
             echo "Скрипт уже запущен с PID $PID."
@@ -50,7 +49,7 @@ start() {
     fi
 
     echo "Запуск скрипта в фоне..."
-    "$EXECUTABLE" --yaml_path "$YAML_PATH" --delay "$DELAY" --device_path "$DEVICE_PATH" &
+    "$EXECUTABLE" --yaml_path "$YAML_PATH" --delay "$DELAY" --device_name "$DEVICE_NAME" &
     echo $! > "$PID_FILE"
     echo "Скрипт запущен с PID $(cat $PID_FILE)"
 }
