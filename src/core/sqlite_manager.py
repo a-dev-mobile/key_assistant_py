@@ -17,11 +17,18 @@ class SQLiteManager:
             ''')
             logging.debug('Table clipboard_buffers created or already exists')
 
-    def save_clipboard_content(self, content):
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute('INSERT INTO clipboard_buffers (content) VALUES (?)', (content,))
-            logging.info(f'Added to database: {content}')
-            logging.debug(f'Clipboard content saved: {content}')
+    def save_clipboard_content(self, content, callback=None):
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute('INSERT INTO clipboard_buffers (content) VALUES (?)', (content,))
+                logging.info(f'Added to database: {content}')
+            logging.debug("Calling callback after saving content.")  # Дополнительный лог
+            if callback:
+                callback()
+        except Exception as e:
+            logging.error(f"Error saving content to database: {e}")
+            if callback:
+                callback()  # Вызов callback даже при ошибке для сброса флага
 
     def get_clipboard_content_by_position(self, position):
         with sqlite3.connect(self.db_path) as conn:
