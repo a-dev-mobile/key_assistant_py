@@ -15,6 +15,28 @@ class KeySequenceHandler:
         self.first_match = True
         self.skip_saving_clipboard = False
         self.clipboard_monitor = clipboard_monitor
+        self.special_characters = {
+            '!': 'shift+1',
+            '@': 'shift+2',
+            '#': 'shift+3',
+            '$': 'shift+4',
+            '%': 'shift+5',
+            '^': 'shift+6',
+            '&': 'shift+7',
+            '*': 'shift+8',
+            '(': 'shift+9',
+            ')': 'shift+0',
+            '_': 'shift+-',
+            '+': 'shift+=',
+            '{': 'shift+[',
+            '}': 'shift+]',
+            '|': 'shift+\\',
+            ':': 'shift+;',
+            '"': 'shift+\'',
+            '<': 'shift+,',
+            '>': 'shift+.',
+            '?': 'shift+/',
+        }
 
     def replace_text(self, key_group, replace):
         try:
@@ -34,7 +56,12 @@ class KeySequenceHandler:
             logging.debug(f"Entering replacement text: {replace}")
             for char in replace:
                 logging.debug(f"Entering character: {char}")
-                keyboard.write(char)
+                if char.isupper():
+                    keyboard.send(f"shift+{char.lower()}")
+                elif char in self.special_characters:
+                    keyboard.send(self.special_characters[char])
+                else:
+                    keyboard.write(char)
                 time.sleep(self.delay)
 
             self.key_sequence.clear()
